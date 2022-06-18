@@ -52,7 +52,7 @@ typings/
 
 # Optional eslint cache
 .eslintcache
-
+*.DS_store
 # Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
@@ -71,6 +71,7 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+.privateKey
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
