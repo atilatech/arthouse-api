@@ -8,9 +8,12 @@ const app: Express = express();
 const port = process.env.PORT || 8008;
 
 app.get('/create-nft', async (req: Request, res: Response) => {
-  const nft = await createNFT();
-  
-  res.send(nft);
+  try {
+    const nftResult = await createNFT();
+    res.send(nftResult);
+  } catch (error) {
+    res.send({error});
+  }
 });
 
 app.listen(port, () => {

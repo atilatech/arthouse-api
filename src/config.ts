@@ -13,12 +13,7 @@ export let CONFIG_CHAINS: {[key: string]: Chain} = {};
 const environmentName = process.env.REACT_ENVIRONMENT_NAME || 8008;
 Object.values(ALL_CONFIG_CHAINS)
 // comment the following line if you want to test with all chains without filtering any chains out
-.filter(chain => environmentName === "prod" ? chain.IS_MAIN_NET : !chain.IS_MAIN_NET)
+// .filter(chain => environmentName === "prod" ? chain.IS_MAIN_NET : !chain.IS_MAIN_NET)
 .forEach(chain => {
     CONFIG_CHAINS[chain.CHAIN_ID] = chain;
-})
-
-export const REACT_APP_MORALIS_SERVER_URL = process.env.REACT_APP_MORALIS_SERVER_URL;
-export const REACT_APP_MORALIS_APP_ID = process.env.REACT_APP_MORALIS_APP_ID;
-
-export const MORALIS_SUPPORTED_CHAINS = ["4", "80001", "97", "56", "137"];
+});

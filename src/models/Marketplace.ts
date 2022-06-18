@@ -54,7 +54,7 @@ export const Marketplaces = [OpenSea, Rarible, LooksRare, NFTrade];
 
 export const getMarketplaceUrls = (chainId: string, nft: NFTMetadata) => {
     const activeChain = CONFIG_CHAINS[chainId];
-    Marketplaces.filter(marketplace => marketplace.supportedChains.includes(activeChain.CHAIN_ID)).map(marketplace => {
-        marketplace.getListingUrl(activeChain, nft)
+    return Marketplaces.filter(marketplace => marketplace.supportedChains.includes(activeChain.CHAIN_ID)).map(marketplace => {
+       return marketplace.getListingUrl(activeChain, nft)
     })
 }
