@@ -15,6 +15,7 @@ Set your desired environment variables and private
 
 ```bash
 curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazonaws.com/staging/api/v1/nft' \
+--header 'X-ATILA-API-CREDITS-KEY: [YOUR_API_KEY]' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 	"nft": {
@@ -25,6 +26,7 @@ curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazona
 	"destination_address": "0xd60271b10861145D2b26d27cb1E59Dd6d367959C",
 	"chain_id": "4"
 }
+'
 '
 ```
 

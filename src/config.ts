@@ -17,3 +17,7 @@ Object.values(ALL_CONFIG_CHAINS)
 .forEach(chain => {
     CONFIG_CHAINS[chain.CHAIN_ID] = chain;
 });
+
+export const ATILA_API_URL = "https://atila-7.herokuapp.com"
+
+export const CREDITS_REQUIRED = 50; // 50 credits is approximately  $0.50 USD

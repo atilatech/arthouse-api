@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 import { createNFT } from './src/create-nft';
 import bodyParser from 'body-parser';
 import serverless from "serverless-http";
-import { ENVIRONMENT_NAME } from './src/config';
+import { CREDITS_REQUIRED, ENVIRONMENT_NAME } from './src/config';
+import AtilaService from './src/services/AtilaService';
 
 dotenv.config();
 
@@ -22,12 +23,26 @@ async (req: Request, res: Response) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
+  const apiKey = req.header("X-ATILA-API-CREDITS-KEY");
+  const apiKeyDetails = await (await AtilaService.getApiKey(apiKey!)).data.results;
+  console.log({ apiKey, apiKeyDetails });
+
+  if (!apiKeyDetails) {
+    return res.status(401).json({error: "Invalid API key Credentials"});
+  }
+
+  const apiKeyDetail = apiKeyDetails[0];
+
+  if (CREDITS_REQUIRED > apiKeyDetail.search_credits_available) {
+    return res.status(401).json({error: `Insufficient search credits. This request requires at least ${CREDITS_REQUIRED} credits. You have ${apiKeyDetail.search_credits_available}`});
+  }
+
   try {
     const createNftRequest = req.body;
     const nftResult = await createNFT(createNftRequest);
     res.json(nftResult);
   } catch (error) {
-    res.json({error});
+    res.status(400).json({error});
   }
 });
 
