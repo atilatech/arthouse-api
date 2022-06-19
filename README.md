@@ -1,6 +1,6 @@
-# Arthouse Server
+# Arthouse API
 
-Programmatically create NFTs.
+Create NFTs using an API. The same API used to power [Arthouse](https://art.atila.ca/) ([source code](https://github.com/atilatech/arthouse)).
 
 ## Quickstart
 `cp shared.env .env`
