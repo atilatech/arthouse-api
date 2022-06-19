@@ -21,5 +21,6 @@ Object.values(ALL_CONFIG_CHAINS)
 export const ATILA_API_URL = "https://atila-7.herokuapp.com"
 
 export const MINT_NFT_PRICE_IN_CREDITS = 50; // Credits required tom int an NFT. 50 credits is approximately  $0.50 USD
+export const MAX_NFTS_PER_REQUEST = 3;
 
 export const ATILA_USER_PROFILE_API_KEY = process.env.ATILA_USER_PROFILE_API_KEY;

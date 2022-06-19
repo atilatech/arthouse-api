@@ -1,13 +1,10 @@
 import express, { Express, Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
 import dotenv from 'dotenv';
-import { createNFT } from './src/create-nft';
+import { createNFT, CreateNFTRequest } from './src/create-nft';
 import bodyParser from 'body-parser';
 import serverless from "serverless-http";
-import { MINT_NFT_PRICE_IN_CREDITS, ENVIRONMENT_NAME } from './src/config';
-import AtilaAPIKeyCreditService from './src/services/AtilaAPIKeyCreditService';
-import axios from 'axios';
-import { checkAPIKeyCredits } from './src/utils/middleware';
+import { ENVIRONMENT_NAME } from './src/config';
+import { checkAPIKeyCredits, checkNFTRequestBody } from './src/utils/middleware';
 
 dotenv.config();
 
@@ -16,22 +13,25 @@ app.use(bodyParser.json());
 
 
 app.post('/api/v1/nft', 
-body('destination_address').isEthereumAddress(),
-body('chain_id').isLength({ min: 1 }),
+checkNFTRequestBody,
 checkAPIKeyCredits, // <---- comment this line if you don't want your API to require an API key
 async (req: Request, res: Response) => {
-  // Finds the validation errors in this request and wraps them in an object with handy functions
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
 
   const { search_credits_available } = (req as any);
 
+  let createNFTResults: any = [];
+
+  const createNFTRequests: Array<CreateNFTRequest> = req.body.nfts;
   try {
-    const createNftRequest = req.body;
-    const nftResult = await createNFT(createNftRequest);
-    return res.json({...nftResult, search_credits_available});
+    createNFTResults = await Promise.all(createNFTRequests.map(async (createNftRequest) => {
+      try {
+        const nftResult = await createNFT(createNftRequest);
+        return nftResult
+      } catch (error) {
+        return {error}
+      }
+  }));
+    return res.json({nfts: createNFTResults, search_credits_available});
   } catch (error) {
     return res.status(400).json({error});
   }

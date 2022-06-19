@@ -15,12 +15,12 @@ const { create } = require("ipfs-http-client");
 const ipfsHostUrl = 'https://ipfs.infura.io:5001/api/v0';
 const client = (create as any)(ipfsHostUrl);
 
-export interface CreateNFTArgs {
+export interface CreateNFTRequest {
     nft: NFTMetadata,
     destination_address: string,
     chain_id: string,
 }
-export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFTArgs) =>{
+export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFTRequest) =>{
     const activeChain = new Chain({...CONFIG_CHAINS[chain_id]});
     const NFT_ADDRESS = activeChain.NFT_ADDRESS;
     
@@ -58,6 +58,7 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
     nft.tokenURI = tokenURI;
 
     const blockExplorerUrl = `${activeChain.BLOCK_EXPLORER_URL}/token/${activeChain.NFT_ADDRESS}?a=${nft.tokenId}`;
+    console.log("\x1b[32m%s\x1b[0m", `Succesfully Minted NFT! View in block explorer: ${blockExplorerUrl}`);
 
     const transactionMetadata = {
         hash: mintTransaction.transactionHash,
@@ -69,7 +70,6 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
 
     const marketplaceUrls = getMarketplaceUrls(chain_id, nft);
     
-    console.log("\x1b[32m%s\x1b[0m", `View in block explorer: ${blockExplorerUrl}`);
     console.log("\x1b[32m%s\x1b[0m", `View in marketplaces: ${marketplaceUrls}`);
     return { nft, blockExplorerUrl, marketplaceUrls, transaction: transactionMetadata };
 }
