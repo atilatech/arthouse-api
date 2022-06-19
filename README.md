@@ -25,6 +25,15 @@ curl --location --request POST 'http://127.0.0.1:8008/api/v1/nft' \
 '
 ```
 
+## Deployment
+1. Deploys to AWS Lambda
+    - [Staging Lambda Console](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/arthouse-server-staging-saveNFTAPI)
+    - Set environment variables: `INFURA_API_KEY` and `CONTRACT_DEPLOYMENT_WALLET_PRIVATE_KEY`
+
+
+## Appendix
+
+
 ### Sample Response
 
 ```json

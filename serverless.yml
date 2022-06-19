@@ -1,0 +1,37 @@
+	
+service: arthouse-server
+ 
+configValidationMode: warn
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: ${opt:stage, 'staging'}
+  region: us-east-1
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+functions:
+  saveNFTAPI:
+    handler: handler.handler
+    tracing: Active
+    events:
+      - http:
+          path: api/v1/nft
+          method: post
+          cors: true
+          integration: lambda-proxy
+          description: "Create an NFT"
+    timeout: 300 # 300 seconds = 5 minutes
+  index:
+    handler: handler.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
+          integration: lambda-proxy
+          description: "Landing page endpoint to show information about the API."
+    timeout: 10

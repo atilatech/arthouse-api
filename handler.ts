@@ -1,15 +1,15 @@
 import express, { Express, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import dotenv from 'dotenv';
-import { createNFT } from './create-nft';
+import { createNFT } from './src/create-nft';
 import bodyParser from 'body-parser';
+import serverless from "serverless-http";
 
 dotenv.config();
 
 const app: Express = express();
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 8008;
 
 app.post('/api/v1/nft', 
 body('destination_address').isEthereumAddress(),
@@ -34,6 +34,10 @@ app.get('/', (req: Request, res: Response) => {
   res.send("Welcome to the Arthouse API. For more instructions on how to use this API see: https://github.com/atilatech/arthouse-server.");
 });
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+export const handler = serverless(app);
+// /*uncomment if you want to test locally
+// const port = process.env.PORT || 8008;
+// app.listen(port, () => {
+//   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+// });
+
