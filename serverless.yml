@@ -8,6 +8,11 @@ provider:
   runtime: nodejs16.x
   stage: ${opt:stage, 'staging'}
   region: us-east-1
+  environment:
+    ENVIRONMENT_NAME: ${self:provider.stage}
+    CONTRACT_DEPLOYMENT_WALLET_PRIVATE_KEY: ""
+    INFURA_API_KEY: ""
+    ATILA_USER_PROFILE_API_KEY: ""
 
 plugins:
   - serverless-plugin-typescript
