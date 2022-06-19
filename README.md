@@ -3,6 +3,9 @@
 Programmatically create NFTs.
 
 ## Quickstart
+`cp shared.env .env`
+
+Set your desired environment variables and private
 
 `yarn install`
 
@@ -11,7 +14,7 @@ Programmatically create NFTs.
 ## Demo
 
 ```bash
-curl --location --request POST 'http://127.0.0.1:8008/api/v1/nft' \
+curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazonaws.com/staging/api/v1/nft' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 	"nft": {

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { createNFT } from './src/create-nft';
 import bodyParser from 'body-parser';
 import serverless from "serverless-http";
+import { ENVIRONMENT_NAME } from './src/config';
 
 dotenv.config();
 
@@ -31,13 +32,19 @@ async (req: Request, res: Response) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-  res.send("Welcome to the Arthouse API. For more instructions on how to use this API see: https://github.com/atilatech/arthouse-server.");
+
+  const repoUrl = "https://github.com/atilatech/arthouse-server";
+  const repoUrlHTML = `<a href="${repoUrl}" target="_blank" rel="noreferrer">${repoUrl}</a>`
+  res.send(`Welcome to the Arthouse API. For more instructions on how to use this API see: ${repoUrlHTML}`);
 });
 
 export const handler = serverless(app);
-// /*uncomment if you want to test locally
-// const port = process.env.PORT || 8008;
-// app.listen(port, () => {
-//   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-// });
+/*uncomment if you want to test locally UNCCOMMENT_LINES_BELOW*/
+const port = process.env.PORT || 8008;
+
+if (ENVIRONMENT_NAME === "dev") {
+  app.listen(port, () => {
+    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  });
+}
 

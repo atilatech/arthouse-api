@@ -17,15 +17,16 @@ functions:
   saveNFTAPI:
     handler: handler.handler
     tracing: Active
+    description: "Create an NFT"
     events:
       - http:
           path: api/v1/nft
           method: post
           cors: true
           integration: lambda-proxy
-          description: "Create an NFT"
     timeout: 300 # 300 seconds = 5 minutes
   index:
+    description: "Landing page endpoint to show information about the API."
     handler: handler.handler
     events:
       - http:
@@ -33,5 +34,4 @@ functions:
           method: get
           cors: true
           integration: lambda-proxy
-          description: "Landing page endpoint to show information about the API."
     timeout: 10
