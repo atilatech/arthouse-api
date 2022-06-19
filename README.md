@@ -11,11 +11,20 @@ Set your desired environment variables and private
 
 `yarn dev`
 
+
+Note: Comment out `checkAPIKeyCredits` middleware in `handler.ts` if you don't want to make your API require an API Key.
+
+```typescript
+body('chain_id').isLength({ min: 1 }),
+checkAPIKeyCredits, // <---- comment this line if you don't want your API to require an API key
+async (req: Request, res: Response) => {
+```
+
 ## Demo
 
 ```bash
 curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazonaws.com/staging/api/v1/nft' \
---header 'X-ATILA-API-CREDITS-KEY: [YOUR_API_KEY]' \
+--header 'X-ATILA-API-CREDITS-KEY: [YOUR_API_KEY_FROM_art.atila.ca/settings]' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 	"nft": {

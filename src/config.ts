@@ -20,4 +20,6 @@ Object.values(ALL_CONFIG_CHAINS)
 
 export const ATILA_API_URL = "https://atila-7.herokuapp.com"
 
-export const CREDITS_REQUIRED = 50; // 50 credits is approximately  $0.50 USD
+export const CREDITS_REQUIRED = 50; // Credits required tom int an NFT. 50 credits is approximately  $0.50 USD
+
+export const ATILA_USER_PROFILE_API_KEY = process.env.ATILA_USER_PROFILE_API_KEY;
