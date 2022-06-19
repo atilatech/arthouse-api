@@ -5,8 +5,7 @@ const ipfsClient = (create as any)(ipfsHostUrl);
 
 export const uploadToIPFS = async (fileUrl: string) => {
 
-    const file = await ipfsClient.add(urlSource(fileUrl))
-    console.log({file});
+    const file = await ipfsClient.add(urlSource(fileUrl));
     const ipfsUrl = `https://ipfs.infura.io/ipfs/${file.cid}`;
     return ipfsUrl;
 }

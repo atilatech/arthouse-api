@@ -16,7 +16,6 @@ class AtilaAPIKeyCreditService {
     };
 
     static patch = (id: string, data: any) => {
-        console.log({ATILA_USER_PROFILE_API_KEY});
         const apiCompletionPromise = request({
             method: 'patch',
             url: `${AtilaAPIKeyCreditService.apiKeyCreditURL}/${id}/`,

@@ -4,11 +4,9 @@ import { CREDITS_REQUIRED } from "../config";
 import AtilaAPIKeyCreditService from "../services/AtilaAPIKeyCreditService";
 
 export const checkAPIKeyCredits: RequestHandler = async function (req, res, next) {
-    
-  console.log("checkAPIKeyCredits");
+
   const apiKey = req.header("X-ATILA-API-CREDITS-KEY");
   const apiKeyDetails = (await AtilaAPIKeyCreditService.getApiKey(apiKey!)).data.results;
-  console.log({ apiKey, apiKeyDetails });
 
   if (apiKeyDetails?.length < 1) {
     return res.status(401).json({error: "Invalid API key Credentials"});
@@ -25,8 +23,7 @@ export const checkAPIKeyCredits: RequestHandler = async function (req, res, next
   (req as any).search_credits_available = search_credits_available;
 
   try {
-    const response = (await AtilaAPIKeyCreditService.patch(apiKeyDetail.id, {search_credits_available})).data;
-    console.log({response});
+    const response = (await AtilaAPIKeyCreditService.patch(apiKeyDetail.id, {search_credits_available})).data
     ({ search_credits_available } = response);
   } catch (error: any) {
     if (axios.isAxiosError(error)) {

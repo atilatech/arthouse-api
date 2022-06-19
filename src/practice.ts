@@ -9,9 +9,6 @@ export const main = async () => {
 
     const gasPrice = await provider.getGasPrice();
     const feeData = await provider.getFeeData();
-
-    console.log("gasPrice", gasPrice);
-    console.log("feeData",feeData);
 };
 
 main();
