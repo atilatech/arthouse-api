@@ -9,6 +9,7 @@ import { Chain } from './models/Chain';
 import { getAccount, getProvider } from './utils/network-helpers';
 import { getMarketplaceUrls } from './models/Marketplace';
 import { NFTMetadata } from './models/NFT';
+import { uploadToIPFS } from './utils/file-manager';
 const { create } = require("ipfs-http-client");
 
 const ipfsHostUrl = 'https://ipfs.infura.io:5001/api/v0';
@@ -28,6 +29,9 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
     const provider = getProvider(chain_id);
 
     const gasPrice = await provider.getGasPrice();
+    if (!nft.image.includes("ipfs.")) {
+        nft.image = await uploadToIPFS(nft.image);
+    }
     const { name, description, image } = nft;
     const data = JSON.stringify({
         name, description, image
@@ -49,7 +53,7 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
     let mintTransaction: ContractReceipt = await mintTransactionPromise.wait();
 
     let event = mintTransaction.events![0]
-    let tokenId = event.args![2];
+    let tokenId = event.args![2].toNumber();
     nft.tokenId = tokenId;
     nft.tokenURI = tokenURI;
 

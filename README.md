@@ -36,7 +36,6 @@ curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazona
 	"chain_id": "4"
 }
 '
-'
 ```
 
 ## Deployment
