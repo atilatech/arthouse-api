@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { createNFT } from './src/create-nft';
 import bodyParser from 'body-parser';
 import serverless from "serverless-http";
-import { CREDITS_REQUIRED, ENVIRONMENT_NAME } from './src/config';
+import { MINT_NFT_PRICE_IN_CREDITS, ENVIRONMENT_NAME } from './src/config';
 import AtilaAPIKeyCreditService from './src/services/AtilaAPIKeyCreditService';
 import axios from 'axios';
 import { checkAPIKeyCredits } from './src/utils/middleware';

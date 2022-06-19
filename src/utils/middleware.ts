@@ -1,6 +1,6 @@
 import { RequestHandler } from "express"
 import axios from 'axios';
-import { CREDITS_REQUIRED } from "../config";
+import { MINT_NFT_PRICE_IN_CREDITS } from "../config";
 import AtilaAPIKeyCreditService from "../services/AtilaAPIKeyCreditService";
 
 export const checkAPIKeyCredits: RequestHandler = async function (req, res, next) {
@@ -14,17 +14,16 @@ export const checkAPIKeyCredits: RequestHandler = async function (req, res, next
 
   const apiKeyDetail = apiKeyDetails[0];
 
-  if (CREDITS_REQUIRED > apiKeyDetail.search_credits_available) {
-    return res.status(401).json({error: `Insufficient search credits. This request requires at least ${CREDITS_REQUIRED} credits. You have ${apiKeyDetail.search_credits_available}`});
+  if (MINT_NFT_PRICE_IN_CREDITS > apiKeyDetail.search_credits_available) {
+    return res.status(401).json({error: `Insufficient search credits. This request requires at least ${MINT_NFT_PRICE_IN_CREDITS} credits. You have ${apiKeyDetail.search_credits_available}`});
   }
 
-  let search_credits_available = apiKeyDetail.search_credits_available - CREDITS_REQUIRED;
-
-  (req as any).search_credits_available = search_credits_available;
+  let search_credits_available = apiKeyDetail.search_credits_available - MINT_NFT_PRICE_IN_CREDITS;
 
   try {
-    const response = (await AtilaAPIKeyCreditService.patch(apiKeyDetail.id, {search_credits_available})).data
-    ({ search_credits_available } = response);
+    const response: any = (await AtilaAPIKeyCreditService.patch(apiKeyDetail.id, {search_credits_available})).data;
+    console.log({response});
+    (req as any).search_credits_available = response.search_credits_available;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       return res.status(error.response?.status!).json({error: error.response?.data});
