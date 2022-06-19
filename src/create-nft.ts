@@ -1,4 +1,4 @@
-import { ContractReceipt, ContractTransaction, ethers, Signer, Transaction } from 'ethers';
+import { ContractReceipt, ethers, Signer } from 'ethers';
 
 import {
     CONFIG_CHAINS
