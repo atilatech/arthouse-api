@@ -1,4 +1,4 @@
-import { ContractReceipt, ContractTransaction, ethers, Signer, Transaction } from 'ethers';
+import { ContractReceipt, ethers, Signer } from 'ethers';
 
 import {
     CONFIG_CHAINS
@@ -9,17 +9,18 @@ import { Chain } from './models/Chain';
 import { getAccount, getProvider } from './utils/network-helpers';
 import { getMarketplaceUrls } from './models/Marketplace';
 import { NFTMetadata } from './models/NFT';
+import { uploadToIPFS } from './utils/file-manager';
 const { create } = require("ipfs-http-client");
 
 const ipfsHostUrl = 'https://ipfs.infura.io:5001/api/v0';
 const client = (create as any)(ipfsHostUrl);
 
-export interface CreateNFTArgs {
+export interface CreateNFTRequest {
     nft: NFTMetadata,
     destination_address: string,
     chain_id: string,
 }
-export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFTArgs) =>{
+export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFTRequest) =>{
     const activeChain = new Chain({...CONFIG_CHAINS[chain_id]});
     const NFT_ADDRESS = activeChain.NFT_ADDRESS;
     
@@ -28,6 +29,9 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
     const provider = getProvider(chain_id);
 
     const gasPrice = await provider.getGasPrice();
+    if (!nft.image.includes("ipfs.")) {
+        nft.image = await uploadToIPFS(nft.image);
+    }
     const { name, description, image } = nft;
     const data = JSON.stringify({
         name, description, image
@@ -49,11 +53,12 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
     let mintTransaction: ContractReceipt = await mintTransactionPromise.wait();
 
     let event = mintTransaction.events![0]
-    let tokenId = event.args![2];
+    let tokenId = event.args![2].toNumber();
     nft.tokenId = tokenId;
     nft.tokenURI = tokenURI;
 
     const blockExplorerUrl = `${activeChain.BLOCK_EXPLORER_URL}/token/${activeChain.NFT_ADDRESS}?a=${nft.tokenId}`;
+    console.log("\x1b[32m%s\x1b[0m", `Succesfully Minted NFT! View in block explorer: ${blockExplorerUrl}`);
 
     const transactionMetadata = {
         hash: mintTransaction.transactionHash,
@@ -65,7 +70,6 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
 
     const marketplaceUrls = getMarketplaceUrls(chain_id, nft);
     
-    console.log("\x1b[32m%s\x1b[0m", `View in block explorer: ${blockExplorerUrl}`);
     console.log("\x1b[32m%s\x1b[0m", `View in marketplaces: ${marketplaceUrls}`);
     return { nft, blockExplorerUrl, marketplaceUrls, transaction: transactionMetadata };
 }
