@@ -18,14 +18,15 @@ export const checkNFTRequestBody: RequestHandler = async function (req, res, nex
     }
 
     nfts.forEach(createNFTRequest => {
-        if (!validator.isEthereumAddress(createNFTRequest.destination_address)) {
-            return res.status(400).json({error: "Invalid destination_address"});
+      const { nft } = createNFTRequest;
+        if (!validator.isEthereumAddress(nft.address)) {
+            return res.status(400).json({error: "Invalid address"});
         }
 
         const validChainIDs = Object.keys(CONFIG_CHAINS);
 
-        if (!validChainIDs.includes(createNFTRequest.chain_id)) {
-            return res.status(400).json({error: `Invalid chain_id, please select one of ${validChainIDs}`});
+        if (!validChainIDs.includes(nft.chainId)) {
+            return res.status(400).json({error: `Invalid chainId, please select one of ${validChainIDs}`});
         }
 
     });
