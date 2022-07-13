@@ -169,13 +169,40 @@ but when you run the command it should be all lowercase: `npx hardhat verify --n
     1. Polygon: https://faucet.polygon.technology
     1. Celo: https://celo.org/developers/faucet
 
+
+
+The following smart contract details is auto-generated using `src/config-chains.json`
+
+Autogenerate the following section by running: `node scripts/add-chains-info-to-readme.js`
+
 ### Smart Contract Addresses
 
-- [View  Ethereum (Rinkeby)  NFT Contract on Block Explorer](https://rinkeby.etherscan.io/token/0x544FEc06fdfB423606d1C705D3105867B8Ff8148)
-    - Note: We use Ethereum Rinkeby because that's what Opensea uses, so our testnet NFTs will also be visible on Opensea.
-- [View  Binance Smart Chain (Testnet)  NFT Contract on Block Explorer](https://testnet.bscscan.com/token/0x5216962D1308AA3de2e89c969dacc1B2F798EaB5)
-- [View  Polygon (Mumbai)  NFT Contract on Block Explorer](https://mumbai.polygonscan.com/token/0x5216962D1308AA3de2e89c969dacc1B2F798EaB5)
-- [View  Celo (Alfajores)  NFT Contract on Block Explorer](https://alfajores-blockscout.celo-testnet.org/token/0x5216962D1308AA3de2e89c969dacc1B2F798EaB5)
+#### Ethereum Rinkeby
+- [Smart Contract](https://rinkeby.etherscan.io/address/0x5f3cc650c751fa194f0d1537ecfbb55a2c40a995)
+- Chain ID: 4
+- Faucets: https://rinkebyfaucet.com
+
+#### Binance Smart Chain Mainnet
+- [Smart Contract](https://bscscan.com/address/0x090d4622ae91acdcfb7354872a934f4e8a1e21a9)
+- Chain ID: 56
+
+#### Binance Smart Chain Testnet
+- [Smart Contract](https://testnet.bscscan.com/address/0xd52d9f6f4e89aa19266fd2b0de1fe81b6e5d1762)
+- Chain ID: 97
+- Faucets: https://testnet.binance.org/faucet-smart
+
+#### Polygon Mainnet
+- [Smart Contract](https://polygonscan.com/address/0x4ad4ab97820137e75ef98fc29ee0e9077130e905)
+- Chain ID: 137
+
+#### Celo Alfajores
+- [Smart Contract](https://alfajores-blockscout.celo-testnet.org/address/0x5fBc39092373b0e1c125C0e29c01E12045d3fe81)
+- Chain ID: 44787
+
+#### Polygon Mumbai
+- [Smart Contract](https://mumbai.polygonscan.com/address/0x9863f06d4f22f01c853eac3d3bfef26af7e70bd8)
+- Chain ID: 80001
+
 <!-- END_SMART_CONTRACT_ADDRESSES -->
 
 #### Troubleshooting
