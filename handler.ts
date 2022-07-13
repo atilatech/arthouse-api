@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import serverless from "serverless-http";
 import { ENVIRONMENT_NAME } from './src/config';
 import { checkAPIKeyCredits, checkNFTRequestBody } from './src/utils/middleware';
+import { NFTMetadata } from './src/models/NFT';
 
 dotenv.config();
 

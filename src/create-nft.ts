@@ -17,22 +17,26 @@ const client = (create as any)(ipfsHostUrl);
 
 export interface CreateNFTRequest {
     nft: NFTMetadata,
-    destination_address: string,
-    chain_id: string,
 }
-export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFTRequest) =>{
-    const activeChain = new Chain({...CONFIG_CHAINS[chain_id]});
-    const NFT_ADDRESS = activeChain.NFT_ADDRESS;
+
+export const createNFT = async (request: CreateNFTRequest) =>{
+
+
+    const { nft } = request;
+    const { name, description, owner, chainId } = nft;
+    let { image, address } = nft;
+
+    const activeChain = new Chain({...CONFIG_CHAINS[chainId]});
     
     // TODO getAccount() is also calling getProvider() is this wasted duplicate effort?
-    const signer = getAccount(chain_id) as Signer;
-    const provider = getProvider(chain_id);
+    const signer = getAccount(chainId) as Signer;
+    const provider = getProvider(chainId);
 
     const gasPrice = await provider.getGasPrice();
-    if (!nft.image.includes("ipfs.")) {
-        nft.image = await uploadToIPFS(nft.image);
+    if (!image.includes("ipfs.")) {
+        image = await uploadToIPFS(image);
     }
-    const { name, description, image } = nft;
+
     const data = JSON.stringify({
         name, description, image
     });
@@ -48,28 +52,35 @@ export const createNFT = async ({ nft, destination_address, chain_id}: CreateNFT
     }
     // const url = "https://ipfs.moralis.io:2053/ipfs/QmXYfYAHxTwbY5sQJUNB2ftF5aHvxfkBUwgEKM5dSfVVLg";
 
-    let nftContract = new ethers.Contract(NFT_ADDRESS, NFT.abi, signer);
-    let mintTransactionPromise = await nftContract.createTokenOnBehalfOf(tokenURI, destination_address, {gasPrice})
-    let mintTransaction: ContractReceipt = await mintTransactionPromise.wait();
+    try {
 
-    let event = mintTransaction.events![0]
-    let tokenId = event.args![2].toNumber();
-    nft.tokenId = tokenId;
-    nft.tokenURI = tokenURI;
 
-    const blockExplorerUrl = `${activeChain.BLOCK_EXPLORER_URL}/token/${activeChain.NFT_ADDRESS}?a=${nft.tokenId}`;
-    console.log("\x1b[32m%s\x1b[0m", `Succesfully Minted NFT! View in block explorer: ${blockExplorerUrl}`);
-
-    const transactionMetadata = {
-        hash: mintTransaction.transactionHash,
-        to: mintTransaction.to,
-        from: mintTransaction.from,
-        gasUsed: mintTransaction.gasUsed,
-        url: `${activeChain.BLOCK_EXPLORER_URL}/tx/${mintTransaction.transactionHash}`
-    }
-
-    const marketplaceUrls = getMarketplaceUrls(chain_id, nft);
+        let nftContract = new ethers.Contract(address, NFT.abi, signer);
+        let mintTransactionPromise = await nftContract.createTokenOnBehalfOf(tokenURI, owner, {gasPrice})
+        let mintTransaction: ContractReceipt = await mintTransactionPromise.wait();
     
-    console.log("\x1b[32m%s\x1b[0m", `View in marketplaces: ${marketplaceUrls}`);
-    return { nft, blockExplorerUrl, marketplaceUrls, transaction: transactionMetadata };
+        let event = mintTransaction.events![0]
+        let tokenId = event.args![2].toNumber();
+    
+        nft.tokenId = tokenId;
+    
+        const blockExplorerUrl = `${activeChain.BLOCK_EXPLORER_URL}/token/${activeChain.NFT_ADDRESS}?a=${tokenId}`;
+        console.log("\x1b[32m%s\x1b[0m", `Succesfully Minted NFT! View in block explorer: ${blockExplorerUrl}`);
+    
+        const transactionMetadata = {
+            hash: mintTransaction.transactionHash,
+            to: mintTransaction.to,
+            from: mintTransaction.from,
+            gasUsed: mintTransaction.gasUsed,
+            url: `${activeChain.BLOCK_EXPLORER_URL}/tx/${mintTransaction.transactionHash}`
+        }
+    
+        const marketplaceUrls = getMarketplaceUrls(nft);
+        
+        console.log("\x1b[32m%s\x1b[0m", `View in marketplaces: ${marketplaceUrls}`);
+        return { nft, blockExplorerUrl, marketplaceUrls, transaction: transactionMetadata };
+    } catch (mintNFTError) {
+        console.log("mintNFTError",mintNFTError);
+        return { nft, error: mintNFTError };
+    }
 }
