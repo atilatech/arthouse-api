@@ -13,7 +13,6 @@ function addChainsInfoToReadme() {
 
     const configInfo = `### Smart Contract Addresses\n\n${generatedConfigInfo}\n<!-- END_SMART_CONTRACT_ADDRESSES -->`
     const updatedReadme = readmeFile.replace(chainConfigRegex, configInfo);
-    console.log({ generatedConfigInfo, configInfo, updatedReadme });
 
     fs.writeFileSync(readmeFilePath, updatedReadme);
 

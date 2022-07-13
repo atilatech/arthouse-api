@@ -48,11 +48,10 @@ task("deploy:nft", "Deploys the NFT.sol contract")
 
 });
 
-task("deploy", "Deploys the Market.sol and NFT.sol contract")
+task("deploy", "Deploys the NFT.sol contract")
 .addParam("chainId", "The Chain ID of the blockchain where this contract will be deployed.")
 .setAction(
   async (taskArgs, hre) => {
-    await hre.run("deploy:market", taskArgs);
     await hre.run("deploy:nft", taskArgs);
   }
 );

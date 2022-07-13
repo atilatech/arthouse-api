@@ -49,7 +49,6 @@ export const checkAPIKeyCredits: RequestHandler = async function (req, res, next
 
   const apiKey = req.header("X-ATILA-API-CREDITS-KEY");
   const apiKeyDetails = (await AtilaAPIKeyCreditService.getApiKey(apiKey!)).data.results;
-  console.log({apiKey, apiKeyDetails});
   if (apiKeyDetails?.length < 1) {
     return res.status(401).json({error: "Invalid API key Credentials"});
   }
@@ -68,7 +67,6 @@ export const checkAPIKeyCredits: RequestHandler = async function (req, res, next
 
   try {
     const response: any = (await AtilaAPIKeyCreditService.patch(apiKeyDetail.id, {search_credits_available})).data;
-    console.log({response});
     (req as any).search_credits_available = response.search_credits_available;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {

@@ -62,10 +62,6 @@ Test a specific feature: `npx hardhat test --grep unListMarketItem`
 
 Sometimes you might try to run a test or a piece of code and find that a function is undefined. This might be due to an outdated artifacts build. Run `npx hardhat compile --force` to force a recompilation.
 
-## Deploying smart contracts
-1. Compile the smart contracts to get the most recent change: `npx hardhat compile`
-1. Load your environment variables using `shared.env` as a template
-
 ## Deployment
 1. Deploys to AWS Lambda
     - [Staging Lambda Console](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/arthouse-server-staging-saveNFTAPI)
@@ -99,13 +95,8 @@ const ownerBalance = await ethers.provider.getBalance(ownerSigner.address);
 
 ## Deploying Smart Contracts
 
-### Deploying Locally
 
-1. Run smart contract deployment script: `npx hardhat run scripts/deploy.js --network localhost`
-
-### Deploying to Testnet or Mainnet
-
-1. Put your private keys for the account that will be deploying the smart contract in `.secrets`. This will NOT be included in your version control and run `source .secrets`.
+1. Put your private keys for the account that will be deploying the smart contract in `.privateKey`. This will NOT be included in your version control and run `source .env`.
 
 1. Add the chain information to `src/config-chains.json`
     1. Get Chain ID from:
@@ -120,7 +111,7 @@ const ownerBalance = await ethers.provider.getBalance(ownerSigner.address);
     1. Polygon: https://faucet.polygon.technology
     1. Celo: https://celo.org/developers/faucet
 
-1. Load secrets to your environment variable `source .secrets`
+1. Load secrets to your environment variable `source .env`
 
 1. Deploy the smart contract: `npx hardhat deploy --chain-id [chainId]`
     1. If you want to deploy just the NFT or the Market without deploying everything run:
@@ -187,7 +178,7 @@ Autogenerate the following section by running: `node scripts/add-chains-info-to-
 - Chain ID: 56
 
 #### Binance Smart Chain Testnet
-- [Smart Contract](https://testnet.bscscan.com/address/0xd52d9f6f4e89aa19266fd2b0de1fe81b6e5d1762)
+- [Smart Contract](https://testnet.bscscan.com/address/0xcd93b4d2fc9ad6957b0f26775ae46a1f05485a3a)
 - Chain ID: 97
 - Faucets: https://testnet.binance.org/faucet-smart
 
