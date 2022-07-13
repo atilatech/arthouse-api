@@ -4,6 +4,7 @@ import { CONFIG_CHAINS, MAX_NFTS_PER_REQUEST, MINT_NFT_PRICE_IN_CREDITS } from "
 import AtilaAPIKeyCreditService from "../services/AtilaAPIKeyCreditService";
 import { CreateNFTRequest } from "../create-nft";
 import validator from 'validator';
+import { Chain } from "../models/Chain";
 
 export const checkNFTRequestBody: RequestHandler = async function (req, res, next) {
 
@@ -19,17 +20,26 @@ export const checkNFTRequestBody: RequestHandler = async function (req, res, nex
 
     nfts.forEach(createNFTRequest => {
       const { nft } = createNFTRequest;
-        if (!validator.isEthereumAddress(nft.address)) {
-            return res.status(400).json({error: "Invalid address"});
-        }
 
-        const validChainIDs = Object.keys(CONFIG_CHAINS);
+      const validChainIDs = Object.keys(CONFIG_CHAINS);
 
         if (!validChainIDs.includes(nft.chainId)) {
             return res.status(400).json({error: `Invalid chainId, please select one of ${validChainIDs}`});
         }
+        
+        const activeChain = new Chain({...CONFIG_CHAINS[nft.chainId]});
+        nft.address = nft.address || activeChain.NFT_ADDRESS; // if an address isn't specified, use the default address for the chain
+
+        if (!validator.isEthereumAddress(nft.address)) {
+            return res.status(400).json({error: "Invalid smart contract address"});
+        }
+        if (!validator.isEthereumAddress(nft.owner)) {
+            return res.status(400).json({error: "Invalid owner address"});
+        }
 
     });
+
+    req.body.nfts = nfts; // update the request body with changes
 
     next()
 

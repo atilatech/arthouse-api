@@ -15,7 +15,7 @@ Set your desired environment variables and private
 Note: Comment out `checkAPIKeyCredits` middleware in `handler.ts` if you don't want to make your API require an API Key.
 
 ```typescript
-body('chain_id').isLength({ min: 1 }),
+body('chainId').isLength({ min: 1 }),
 checkAPIKeyCredits, // <---- comment this line if you don't want your API to require an API key
 async (req: Request, res: Response) => {
 ```
@@ -32,19 +32,19 @@ curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazona
             "nft": {
                 "name": "Atila Landing Page Banner [Rinkeby]",
                 "description": "The landing page banner image for atila.ca",
-                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png"
-            },
-            "destination_address": "0xd60271b10861145D2b26d27cb1E59Dd6d367959C",
-            "chain_id": "4"
+                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png",
+                "chainId": "4",
+                "owner": "0x27F7e8d7C63C414Eae2BB07E1a9B9057a1D382cf"
+            }
         },
         {
             "nft": {
                 "name": "Atila Landing Page Banner [Polygon]",
                 "description": "The landing page banner image for atila.ca",
-                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png"
+                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png",
+                "chainId": "137",
+                "owner": "0x27F7e8d7C63C414Eae2BB07E1a9B9057a1D382cf"
             },
-            "destination_address": "0xd60271b10861145D2b26d27cb1E59Dd6d367959C",
-            "chain_id": "137"
         }
     ]
 }'

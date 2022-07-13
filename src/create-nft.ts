@@ -27,7 +27,6 @@ export const createNFT = async (request: CreateNFTRequest) =>{
     let { image, address } = nft;
 
     const activeChain = new Chain({...CONFIG_CHAINS[chainId]});
-    address = address || activeChain.NFT_ADDRESS; // if an address isn't specified, use the default address for the chain
     
     // TODO getAccount() is also calling getProvider() is this wasted duplicate effort?
     const signer = getAccount(chainId) as Signer;
@@ -53,26 +52,35 @@ export const createNFT = async (request: CreateNFTRequest) =>{
     }
     // const url = "https://ipfs.moralis.io:2053/ipfs/QmXYfYAHxTwbY5sQJUNB2ftF5aHvxfkBUwgEKM5dSfVVLg";
 
-    let nftContract = new ethers.Contract(address, NFT.abi, signer);
-    let mintTransactionPromise = await nftContract.createTokenOnBehalfOf(tokenURI, owner, {gasPrice})
-    let mintTransaction: ContractReceipt = await mintTransactionPromise.wait();
+    try {
 
-    let event = mintTransaction.events![0]
-    let tokenId = event.args![2].toNumber();
 
-    const blockExplorerUrl = `${activeChain.BLOCK_EXPLORER_URL}/token/${activeChain.NFT_ADDRESS}?a=${tokenId}`;
-    console.log("\x1b[32m%s\x1b[0m", `Succesfully Minted NFT! View in block explorer: ${blockExplorerUrl}`);
-
-    const transactionMetadata = {
-        hash: mintTransaction.transactionHash,
-        to: mintTransaction.to,
-        from: mintTransaction.from,
-        gasUsed: mintTransaction.gasUsed,
-        url: `${activeChain.BLOCK_EXPLORER_URL}/tx/${mintTransaction.transactionHash}`
-    }
-
-    const marketplaceUrls = getMarketplaceUrls(nft);
+        let nftContract = new ethers.Contract(address, NFT.abi, signer);
+        let mintTransactionPromise = await nftContract.createTokenOnBehalfOf(tokenURI, owner, {gasPrice})
+        let mintTransaction: ContractReceipt = await mintTransactionPromise.wait();
     
-    console.log("\x1b[32m%s\x1b[0m", `View in marketplaces: ${marketplaceUrls}`);
-    return { nft, blockExplorerUrl, marketplaceUrls, transaction: transactionMetadata };
+        let event = mintTransaction.events![0]
+        let tokenId = event.args![2].toNumber();
+    
+        nft.tokenId = tokenId;
+    
+        const blockExplorerUrl = `${activeChain.BLOCK_EXPLORER_URL}/token/${activeChain.NFT_ADDRESS}?a=${tokenId}`;
+        console.log("\x1b[32m%s\x1b[0m", `Succesfully Minted NFT! View in block explorer: ${blockExplorerUrl}`);
+    
+        const transactionMetadata = {
+            hash: mintTransaction.transactionHash,
+            to: mintTransaction.to,
+            from: mintTransaction.from,
+            gasUsed: mintTransaction.gasUsed,
+            url: `${activeChain.BLOCK_EXPLORER_URL}/tx/${mintTransaction.transactionHash}`
+        }
+    
+        const marketplaceUrls = getMarketplaceUrls(nft);
+        
+        console.log("\x1b[32m%s\x1b[0m", `View in marketplaces: ${marketplaceUrls}`);
+        return { nft, blockExplorerUrl, marketplaceUrls, transaction: transactionMetadata };
+    } catch (mintNFTError) {
+        console.log("mintNFTError",mintNFTError);
+        return { nft, error: mintNFTError };
+    }
 }
