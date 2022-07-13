@@ -153,7 +153,7 @@ TODO add a check that chainID matches the passed in network
     1. To see a list of other networks: `npx hardhat verify --list-networks`
 
 Note: That the `hardhat.config.js` expects the network name to be camelcase e.g. `bscTestnet: BSCSCAN_API_KEY`,
-but when you run the command it should be all lowercase: `npx hardhat verify --network bscTestnet [ADDRESS]`
+but when you run the command it should be all lowercase: `npx hardhat verify --network bsctestnet [ADDRESS]`
 ### Adding a New Chain
 
 1. Add the chain information to `src/config-chains.json`

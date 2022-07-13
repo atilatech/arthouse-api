@@ -4,7 +4,7 @@ require("@nomiclabs/hardhat-etherscan");
 require("./scripts/deploy.js");
 
 const { hardHatSettings } = require("./scripts/helpers.js");
-const { ETHERSCAN_API_KEY, BSCSCAN_API_KEY } = process.env;
+const { ETHERSCAN_API_KEY, BSCSCAN_API_KEY, POLYGONSCAN_API_KEY, ETHERSCAN_OPTIMISM_API_KEY } = process.env;
 
 module.exports = {
   solidity: {
