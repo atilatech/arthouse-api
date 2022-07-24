@@ -15,10 +15,11 @@ Set your desired environment variables and private
 Note: Comment out `checkAPIKeyCredits` middleware in `handler.ts` if you don't want to make your API require an API Key.
 
 ```typescript
-body('chain_id').isLength({ min: 1 }),
+body('chainId').isLength({ min: 1 }),
 checkAPIKeyCredits, // <---- comment this line if you don't want your API to require an API key
 async (req: Request, res: Response) => {
 ```
+
 
 ## Demo
 
@@ -32,29 +33,177 @@ curl --location --request POST 'https://vxherrwkab.execute-api.us-east-1.amazona
             "nft": {
                 "name": "Atila Landing Page Banner [Rinkeby]",
                 "description": "The landing page banner image for atila.ca",
-                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png"
-            },
-            "destination_address": "0xd60271b10861145D2b26d27cb1E59Dd6d367959C",
-            "chain_id": "4"
+                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png",
+                "chainId": "4",
+                "owner": "0x27F7e8d7C63C414Eae2BB07E1a9B9057a1D382cf"
+            }
         },
         {
             "nft": {
                 "name": "Atila Landing Page Banner [Polygon]",
                 "description": "The landing page banner image for atila.ca",
-                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png"
+                "image": "https://atila.ca/static/media/landing-cover-default.4fd96d95.png",
+                "chainId": "137",
+                "owner": "0x27F7e8d7C63C414Eae2BB07E1a9B9057a1D382cf"
             },
-            "destination_address": "0xd60271b10861145D2b26d27cb1E59Dd6d367959C",
-            "chain_id": "137"
         }
     ]
 }'
 ```
+
+
+## Running Tests
+
+###  Testing Smart Contracts
+
+`npx hardhat test`
+
+Test a specific feature: `npx hardhat test --grep unListMarketItem`
+
+Sometimes you might try to run a test or a piece of code and find that a function is undefined. This might be due to an outdated artifacts build. Run `npx hardhat compile --force` to force a recompilation.
 
 ## Deployment
 1. Deploys to AWS Lambda
     - [Staging Lambda Console](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/arthouse-server-staging-saveNFTAPI)
     - Set environment variables: `INFURA_API_KEY` and `CONTRACT_DEPLOYMENT_WALLET_PRIVATE_KEY`
 
+
+## Run Hardhat in Console
+
+To quickly run commands you can use the interactive hardhat console
+
+`npx hardhat console`
+
+```bash
+const [ownerSigner, signer1, signer2] = await ethers.getSigners();
+const ownerBalance = await ethers.provider.getBalance(ownerSigner.address);
+```
+
+### Set up your Backend
+
+1. If you won't be deploying to a test net or mainnet, go to `hardhat.config.js` and comment out `privateKey` and all the networks  except for `networks.hardhat`
+
+1. Put your private keys for the account that will be deploying the smart contract in a `.secrets` file. This will NOT be included in your version control. You can get the key from `shared.secrets` and run `cp shared.secrets .secrets` and replace the private key.
+
+1. Load the secret key `source .secrets`
+
+1. Compile the smart contracts to get the most recent change: `npx hardhat compile`
+
+1. Run your own local blockchain node using: `npx hardhat node`
+
+## Backend
+
+## Deploying Smart Contracts
+
+
+1. Put your private keys for the account that will be deploying the smart contract in `.privateKey`. This will NOT be included in your version control and run `source .env`.
+
+1. Add the chain information to `src/config-chains.json`
+    1. Get Chain ID from:
+        1. https://chainlist.org/
+    1. Get an RPC URL for your desired blockchain (TODO: where to get good RPC urls)
+        1. Binance: https://docs.binance.org/smart-chain/developer/rpc.html (TODO: add other chains)
+    1. Add the apikey to `.secrets`
+
+1. Get some tokens to pay the gas fees for deploying the smart contracts. On testnets you can use a faucet:
+    1. Ethereum Rinkeby: https://rinkebyfaucet.com
+    1. Binance: https://testnet.binance.org/faucet-smart
+    1. Polygon: https://faucet.polygon.technology
+    1. Celo: https://celo.org/developers/faucet
+
+1. Load secrets to your environment variable `source .env`
+
+1. Deploy the smart contract: `npx hardhat deploy --chain-id [chainId]`
+    1. If you want to deploy just the NFT or the Market without deploying everything run:
+        1.  `npx hardhat deploy:nft --chain-id [chainId]`
+        1.  `npx hardhat deploy:market --chain-id [chainId]`
+    1. Here are some examples:
+    1. Ethereum Rinkeby: `npx hardhat deploy --chain-id 4`
+    1. Ethereum Rinkeby NFT only: `npx hardhat deploy:nft --chain-id 4`
+    1. Binance Smart Chain Testnet: `npx hardhat deploy --chain-id 97`
+    1. Polygon Mumbai: `npx hardhat deploy --chain-id 80001`
+
+If the deploy script is not working you can also us the default hardhat deployment script. Make sure to update the CHAIN ID variable:
+TODO add a check that chainID matches the passed in network
+ 
+`npx hardhat run --network polygon scripts/deploy-hardhat.js`
+
+1. Add the new chain information to `README.md`, see these commits below for examples of what to change:
+    1. [Ethereum](https://github.com/atilatech/art-house/commit/d97572f9d730a3a469a712dec04fc3ea6dc97eb8)
+    1. [Binance](https://github.com/atilatech/art-house/commit/274ff640c116d6637add521e7eae7fe9de2fbe92)
+    1. [Polygon](https://github.com/atilatech/art-house/commit/a211ac1bc50d52ffd266b5eb5fd47bf4b232d366)
+    1. [Celo](https://github.com/atilatech/art-house/commit/af8ab520fe80c3a148e45a963ead9270e2710a80)
+
+### Verifying Smart Contract on Etherscan (BSCScan, PolygonScan etc.)
+
+1. Get Etherscan API Key: https://etherscan.io/myapikey
+    1. Similar process for BSC Scan, PolygonScan etc
+1. Set environment variable in `.secrets`: `export ETHERSCAN_API_KEY=""`
+1. `npx hardhat verify --network rinkeby [smart_contract_address_you_just deployed]`
+    1. Example: `npx hardhat verify --network rinkeby 0x5f3cc650c751fa194f0d1537ecfbb55a2c40a995`
+    1. To see a list of other networks: `npx hardhat verify --list-networks`
+
+Note: That the `hardhat.config.js` expects the network name to be camelcase e.g. `bscTestnet: BSCSCAN_API_KEY`,
+but when you run the command it should be all lowercase: `npx hardhat verify --network bsctestnet [ADDRESS]`
+### Adding a New Chain
+
+1. Add the chain information to `src/config-chains.json`
+    1. Get Chain ID from:
+        1. https://chainlist.org/
+    1. Get an RPC URL for your desired blockchain (TODO: where to get good RPC urls)
+        1. Binance: https://docs.binance.org/smart-chain/developer/rpc.html (TODO: add other chains)
+    1. Add the apikey to `.secrets`
+
+1. Get some tokens to pay the gas fees for deploying the smart contracts. On testnets you can use a faucet:
+    1. Ethereum Rinkeby: https://rinkebyfaucet.com
+    1. Binance: https://testnet.binance.org/faucet-smart
+    1. Polygon: https://faucet.polygon.technology
+    1. Celo: https://celo.org/developers/faucet
+
+
+
+The following smart contract details is auto-generated using `src/config-chains.json`
+
+Autogenerate the following section by running: `node scripts/add-chains-info-to-readme.js`
+
+### Smart Contract Addresses
+
+#### Ethereum Rinkeby
+- [Smart Contract](https://rinkeby.etherscan.io/address/0x5f3cc650c751fa194f0d1537ecfbb55a2c40a995)
+- Chain ID: 4
+- Faucets: https://rinkebyfaucet.com
+
+#### Binance Smart Chain Mainnet
+- [Smart Contract](https://bscscan.com/address/0x090d4622ae91acdcfb7354872a934f4e8a1e21a9)
+- Chain ID: 56
+
+#### Binance Smart Chain Testnet
+- [Smart Contract](https://testnet.bscscan.com/address/0xcd93b4d2fc9ad6957b0f26775ae46a1f05485a3a)
+- Chain ID: 97
+- Faucets: https://testnet.binance.org/faucet-smart
+
+#### Polygon Mainnet
+- [Smart Contract](https://polygonscan.com/address/0x4ad4ab97820137e75ef98fc29ee0e9077130e905)
+- Chain ID: 137
+
+#### Celo Alfajores
+- [Smart Contract](https://alfajores-blockscout.celo-testnet.org/address/0x5fBc39092373b0e1c125C0e29c01E12045d3fe81)
+- Chain ID: 44787
+
+#### Polygon Mumbai
+- [Smart Contract](https://mumbai.polygonscan.com/address/0x9863f06d4f22f01c853eac3d3bfef26af7e70bd8)
+- Chain ID: 80001
+
+<!-- END_SMART_CONTRACT_ADDRESSES -->
+
+#### Troubleshooting
+
+If you see, the following doublecheck you set the correct credentials for your RPC URL:
+```
+Invalid JSON-RPC response received: {
+  "message":"Invalid authentication credentials"
+}
+```
 
 ## Appendix
 

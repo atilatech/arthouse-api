@@ -4,6 +4,7 @@ import { CONFIG_CHAINS, MAX_NFTS_PER_REQUEST, MINT_NFT_PRICE_IN_CREDITS } from "
 import AtilaAPIKeyCreditService from "../services/AtilaAPIKeyCreditService";
 import { CreateNFTRequest } from "../create-nft";
 import validator from 'validator';
+import { Chain } from "../models/Chain";
 
 export const checkNFTRequestBody: RequestHandler = async function (req, res, next) {
 
@@ -18,17 +19,27 @@ export const checkNFTRequestBody: RequestHandler = async function (req, res, nex
     }
 
     nfts.forEach(createNFTRequest => {
-        if (!validator.isEthereumAddress(createNFTRequest.destination_address)) {
-            return res.status(400).json({error: "Invalid destination_address"});
+      const { nft } = createNFTRequest;
+
+      const validChainIDs = Object.keys(CONFIG_CHAINS);
+
+        if (!validChainIDs.includes(nft.chainId)) {
+            return res.status(400).json({error: `Invalid chainId, please select one of ${validChainIDs}`});
         }
+        
+        const activeChain = new Chain({...CONFIG_CHAINS[nft.chainId]});
+        nft.address = nft.address || activeChain.NFT_ADDRESS; // if an address isn't specified, use the default address for the chain
 
-        const validChainIDs = Object.keys(CONFIG_CHAINS);
-
-        if (!validChainIDs.includes(createNFTRequest.chain_id)) {
-            return res.status(400).json({error: `Invalid chain_id, please select one of ${validChainIDs}`});
+        if (!validator.isEthereumAddress(nft.address)) {
+            return res.status(400).json({error: "Invalid smart contract address"});
+        }
+        if (!validator.isEthereumAddress(nft.owner)) {
+            return res.status(400).json({error: "Invalid owner address"});
         }
 
     });
+
+    req.body.nfts = nfts; // update the request body with changes
 
     next()
 
@@ -38,7 +49,6 @@ export const checkAPIKeyCredits: RequestHandler = async function (req, res, next
 
   const apiKey = req.header("X-ATILA-API-CREDITS-KEY");
   const apiKeyDetails = (await AtilaAPIKeyCreditService.getApiKey(apiKey!)).data.results;
-  console.log({apiKey, apiKeyDetails});
   if (apiKeyDetails?.length < 1) {
     return res.status(401).json({error: "Invalid API key Credentials"});
   }
@@ -57,7 +67,6 @@ export const checkAPIKeyCredits: RequestHandler = async function (req, res, next
 
   try {
     const response: any = (await AtilaAPIKeyCreditService.patch(apiKeyDetail.id, {search_credits_available})).data;
-    console.log({response});
     (req as any).search_credits_available = response.search_credits_available;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
